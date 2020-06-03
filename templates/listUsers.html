@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+<!-- datatable -->
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="htpps://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+<title>List user</title>
+<script>
+    $( document ).ready(function() {
+
+        table_movies = $('#users').DataTable({            
+            destroy: true,
+            ajax: {
+                url: "/getUsers",
+                dataSrc: ""
+            },
+            columns: [                
+                {"data": "firstname"},
+                {"data": "lastname"},
+                {"data": "email"},
+                {"data": "gender"},
+                {"data": "id"}
+            ],
+            searching: false
+        })       
+    });
+</script>
+</head>
+<body>
+    <h1>List of users</h1>
+    <table id="users" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Director</th>
+                <th>Genre</th>
+                <th>Released Date</th>
+                <th>Events</th>
+            </tr>
+        </thead>
+    </table>
+</body>
+</html>
