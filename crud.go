@@ -57,7 +57,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(users)
 }
 
@@ -138,5 +138,5 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "total registers affected were different than 1", http.StatusInternalServerError)
 	}
 
-	http.Redirect(w, r, "/listUsers", 301)
+	w.WriteHeader(http.StatusAccepted)
 }

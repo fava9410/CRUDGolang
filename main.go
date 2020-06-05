@@ -27,9 +27,9 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/", Home)
-	http.HandleFunc("/createUser", CreateUser)
 	http.HandleFunc("/listUsers", ListUsers)
 
+	http.HandleFunc("/createUser", CreateUser)
 	http.HandleFunc("/getUsers", GetUsers)
 	http.HandleFunc("/getUserById", GetUser)
 	http.HandleFunc("/updateUser", UpdateUser)

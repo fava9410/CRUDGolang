@@ -4,13 +4,17 @@
 <head>
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
 <!-- datatable -->
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" type="text/css" href="htpps://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<!--icons-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <title>List user</title>
 <script>
     $( document ).ready(function() {
 
-        table_movies = $('#users').DataTable({            
+        table_users = $('#users').DataTable({            
             destroy: true,
             ajax: {
                 url: "/getUsers",
@@ -22,10 +26,37 @@
                 {"data": "email"},
                 {"data": "gender"},
                 {"data": "id"}
+                
             ],
-            searching: false
-        })       
+            searching: false,
+            columnDefs: [
+            {
+                // The `data` parameter refers to the data for the cell.
+                // The `rows`argument is an object representing all the data for the current row.
+                "render": function ( data, type, row ) {
+                    return "<i class='material-icons' onclick=delete_user('"+data+"') \
+										style='cursor: pointer' data-pk='" + data + "' >delete</i> \
+										<i class='material-icons' onclick=window.location.replace('/movies/edit_movie/"+data+"') \
+										style='cursor: pointer' data-pk='" + data + "' >mode_edit</i>";
+                },
+                "targets": -1  // -1 is the last column, 0 the first, 1 the second, etc.
+            }
+        ]
+        })
     });
+
+    function delete_user(id){
+        console.log("delete user")
+        $.ajax({
+            url : "/deleteUser",
+            type: "POST",
+            data: {"id": id},
+            success: function(response){
+                console.log("delete ajax response!!!")
+                table_users.ajax.reload();
+            }
+        })
+    }
 </script>
 </head>
 <body>
@@ -33,10 +64,10 @@
     <table id="users" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Director</th>
-                <th>Genre</th>
-                <th>Released Date</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Email</th>
+                <th>Gender</th>
                 <th>Events</th>
             </tr>
         </thead>
