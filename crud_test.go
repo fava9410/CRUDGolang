@@ -171,7 +171,7 @@ func TestUpdateUser(t *testing.T) {
 
 	handler.ServeHTTP(rr, req)
 
-	if rr.Result().StatusCode != 301 {
+	if rr.Result().StatusCode != 202 {
 		t.Errorf("status code is diferent, got %d", rr.Result().StatusCode)
 	}
 }

@@ -2,62 +2,96 @@
 <html>
 
 <head>
-<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
-<!-- datatable -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-<!--icons-->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- JS, Popper.js, and jQuery -->
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
-<title>List user</title>
-<script>
-    $( document ).ready(function() {
+    
 
-        table_users = $('#users').DataTable({            
-            destroy: true,
-            ajax: {
-                url: "/getUsers",
-                dataSrc: ""
-            },
-            columns: [                
-                {"data": "firstname"},
-                {"data": "lastname"},
-                {"data": "email"},
-                {"data": "gender"},
-                {"data": "id"}
-                
-            ],
-            searching: false,
-            columnDefs: [
-            {
-                // The `data` parameter refers to the data for the cell.
-                // The `rows`argument is an object representing all the data for the current row.
-                "render": function ( data, type, row ) {
-                    return "<i class='material-icons' onclick=delete_user('"+data+"') \
-										style='cursor: pointer' data-pk='" + data + "' >delete</i> \
-										<i class='material-icons' onclick=window.location.replace('/movies/edit_movie/"+data+"') \
-										style='cursor: pointer' data-pk='" + data + "' >mode_edit</i>";
+    <!-- datatable -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+    <!--icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <title>List user</title>
+    <script>
+        $( document ).ready(function() {
+
+            table_users = $('#users').DataTable({            
+                destroy: true,
+                ajax: {
+                    url: "/getUsers",
+                    dataSrc: ""
                 },
-                "targets": -1  // -1 is the last column, 0 the first, 1 the second, etc.
-            }
-        ]
-        })
-    });
+                columns: [                
+                    {"data": "firstname"},
+                    {"data": "lastname"},
+                    {"data": "email"},
+                    {"data": "gender"},
+                    {"data": "id"}
+                    
+                ],
+                searching: false,
+                columnDefs: [
+                {
+                    // The `data` parameter refers to the data for the cell.
+                    // The `rows`argument is an object representing all the data for the current row.
+                    "render": function ( data, type, row ) {
+                        return "<i class='material-icons' onclick=delete_user('"+data+"') \
+                                            style='cursor: pointer' data-pk='" + data + "' >delete</i> \
+                                            <i class='material-icons' onclick=update_user_modal("+JSON.stringify(row)+") \
+										    style='cursor: pointer'>mode_edit</i>";                                            
+                    },
+                    "targets": -1  // -1 is the last column, 0 the first, 1 the second, etc.
+                }
+            ]
+            })
+        });
 
-    function delete_user(id){
-        console.log("delete user")
-        $.ajax({
-            url : "/deleteUser",
-            type: "POST",
-            data: {"id": id},
-            success: function(response){
-                console.log("delete ajax response!!!")
-                table_users.ajax.reload();
-            }
-        })
-    }
-</script>
+        function delete_user(id){
+            console.log("delete user")
+            $.ajax({
+                url : "/deleteUser",
+                type: "POST",
+                data: {"id": id},
+                success: function(response){
+                    table_users.ajax.reload();
+                }
+            })
+        }
+
+        function update_user_modal(row){
+
+            $("#edit_first_name").val(row["firstname"])
+            $("#edit_last_name").val(row["lastname"])
+            $("#edit_email").val(row["email"])
+            $("#edit_id").val(row["id"])
+            $('#edit_gender option[value="'+row['gender']+'"]').prop('selected', true)
+
+            $("#myModal").modal("show")
+        }
+
+        function SubForm (){
+            $.ajax({
+                url:'/updateUser',
+                type:'post',
+                data:$('#update_user_form').serialize(),
+                success:function(){
+                    alert("usuario actualizado")
+                    $("#myModal").modal("toggle")
+                    table_users.ajax.reload();
+                }
+            });
+        }
+
+    </script>
 </head>
 <body>
     <h1>List of users</h1>
@@ -72,5 +106,40 @@
             </tr>
         </thead>
     </table>
+    
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+    
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="position: left;">Edit user</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form id="update_user_form">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="edit_id">
+                        <input type="text" name="first_name" id="edit_first_name" placeholder="First name">
+                        <br>
+                        <input type="text" name="last_name" id="edit_last_name" placeholder="Last name">
+                        <br>
+                        <input type="email" name="email" id="edit_email" placeholder="Email">
+                        <br>
+                        <select id="edit_gender" name="gender">
+                        <option value="1">Male</option>
+                        <option value="2">Female</option>
+                        </select>
+                        <br>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" onclick="SubForm()" >Update</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
 </body>
 </html>

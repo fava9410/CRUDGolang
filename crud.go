@@ -32,7 +32,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	http.Redirect(w, r, "/", 301)
+	http.Redirect(w, r, "/listUsers", 301)
 
 }
 
@@ -114,7 +114,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error in update", http.StatusInternalServerError)
 	}
 
-	http.Redirect(w, r, "/listUsers", 301)
+	//http.Redirect(w, r, "/listUsers", 301)
+	w.WriteHeader(http.StatusAccepted)
 }
 
 //DeleteUser deletes an user with its id
